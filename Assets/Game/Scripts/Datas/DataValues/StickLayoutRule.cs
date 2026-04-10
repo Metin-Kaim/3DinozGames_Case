@@ -1,9 +1,12 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class StickLayoutRule
+namespace Assets.Game.Scripts.Datas.DataValues
 {
-    public int stickCount;
-    public Vector2Int gridSize;
+    [Serializable]
+    public class StickLayoutRule
+    {
+        public int stickCount;
+        public Vector2Int gridSize;
+    }
 }

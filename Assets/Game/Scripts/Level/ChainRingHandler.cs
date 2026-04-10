@@ -1,36 +1,84 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
-public class ChainRingHandler : MonoBehaviour
+namespace Assets.Game.Scripts.Level
 {
-    [SerializeField] private ChainRingHandler upperRing;
-    [SerializeField] private List<ChainRingHandler> lowerRings = new();
-
-    [SerializeField] private Rigidbody rigidbody;
-    [SerializeField] private FixedJoint fixedJoint;
-
-    public Rigidbody Rb => rigidbody;
-
-    public ChainRingHandler UpperRing => upperRing;
-    public List<ChainRingHandler> LowerRings => lowerRings;
-
-    public void ConnectAbove(ChainRingHandler upper)
+    public class ChainRingHandler : MonoBehaviour
     {
-        upperRing = upper;
-        upper?.lowerRings.Add(this);
+        [SerializeField] private ChainRingHandler upperRing;
+        [SerializeField] private List<ChainRingHandler> lowerRings = new();
 
-        if (Rb == null || fixedJoint == null)
-            return;
+        [SerializeField] private Rigidbody rb;
+        [SerializeField] private FixedJoint fixedJoint;
 
-        if (upper != null)
+        private ChainController _chainHook;
+
+        public Rigidbody Rb => rb;
+
+        public ChainRingHandler UpperRing => upperRing;
+        public List<ChainRingHandler> LowerRings => lowerRings;
+
+        public void Init(ChainController chainHook)
         {
-            fixedJoint.connectedBody = upper.Rb;
-            Rb.isKinematic = false;
+            _chainHook = chainHook;
         }
-        else
+
+        public void NotifyClicked()
         {
-            fixedJoint.connectedBody = null;
-            Rb.isKinematic = true;
+            _chainHook?.OnRingClicked();
+        }
+
+        public void ConnectAbove(ChainRingHandler upper)
+        {
+            upperRing = upper;
+            upper?.lowerRings.Add(this);
+
+            if (Rb == null || fixedJoint == null)
+                return;
+
+            if (upper != null)
+            {
+                fixedJoint.connectedBody = upper.Rb;
+                Rb.isKinematic = false;
+            }
+            else
+            {
+                fixedJoint.connectedBody = null;
+                Rb.isKinematic = true;
+            }
+        }
+
+        public void DetachFromChainForStick()
+        {
+            if (upperRing != null)
+            {
+                upperRing.lowerRings.Remove(this);
+                upperRing = null;
+            }
+
+            if (fixedJoint != null)
+                Destroy(fixedJoint);
+
+            if (rb != null)
+            {
+                rb.detectCollisions = false;
+                rb.isKinematic = true;
+            }
+        }
+
+        public void AttachToStickWithTween(StickHandler stick, float duration)
+        {
+            if (stick == null)
+                return;
+
+            if (!stick.TryReserveNextRingSlot(out Vector3 localTarget))
+                return;
+
+            transform.SetParent(stick.transform);
+            transform.DOKill();
+            transform.DOLocalMove(localTarget, duration).SetEase(Ease.OutBack, .75f);
+            transform.DORotate(Vector3.zero, duration / 2f).SetEase(Ease.Linear);
         }
     }
 }
