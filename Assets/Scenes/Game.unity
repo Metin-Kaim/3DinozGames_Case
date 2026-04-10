@@ -895,10 +895,16 @@ MonoBehaviour:
   stickCount: 5
   spacingX: 1.5
   spacingY: 1.5
-  hookPrefab: {fileID: 0}
   chainContainer: {fileID: 1394569226}
-  chainCount: 3
-  chainSpacingX: 1.75
+  hookCount: 2
+  hookSpacingX: 1.5
+  chainHookPrefab: {fileID: 1825282950432131733, guid: d65eaaf4273650045a946977af42a6cc,
+    type: 3}
+  chainLinkPrefab: {fileID: 583669382024433804, guid: 515c07f6cb68d3c48a2f837a8c1b6a3d,
+    type: 3}
+  linksPerChain: 5
+  chainLinkStepY: 0.45
+  firstLinkLocalOffset: {x: 0, y: -0.35, z: -0.2}
 --- !u!1 &1394569225
 GameObject:
   m_ObjectHideFlags: 0

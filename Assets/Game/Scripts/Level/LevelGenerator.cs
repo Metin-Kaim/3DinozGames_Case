@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -12,12 +13,22 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private float spacingX = 1.5f;
     [SerializeField] private float spacingY = 1.5f;
 
-    [Header("Chains")]
-    [SerializeField] private GameObject hookPrefab;
+    [Header("Chains — Placement")]
     [SerializeField] private Transform chainContainer;
     [Range(1, 3)]
-    [SerializeField] private int chainCount = 2;
-    [SerializeField] private float chainSpacingX = 1.5f;
+    [SerializeField] private int hookCount = 2;
+    [SerializeField] private float hookSpacingX = 1.5f;
+
+    [Header("Chains — Hook")]
+    [SerializeField] private GameObject chainHookPrefab;
+
+    [Header("Chains — Links")]
+    [FormerlySerializedAs("hookPrefab")]
+    [SerializeField] private GameObject chainLinkPrefab;
+    [Min(1)]
+    [SerializeField] private int linksPerChain = 5;
+    [SerializeField] private float chainLinkStepY = 0.4f;
+    [SerializeField] private Vector3 firstLinkLocalOffset = new Vector3(0f, -0.4f, 0f);
 
     private void Awake()
     {
@@ -57,15 +68,35 @@ public class LevelGenerator : MonoBehaviour
 
     private void SpawnChains()
     {
-        if (hookPrefab == null || chainCount <= 0)
+        if (chainHookPrefab == null || hookCount <= 0)
             return;
 
-        List<Vector3> localPositions = GenerateChainPositions(chainCount, chainSpacingX);
+        List<Vector3> hookAnchors = GenerateChainPositions(hookCount, hookSpacingX);
 
-        foreach (Vector3 localPos in localPositions)
+        for (int h = 0; h < hookCount; h++)
         {
-            GameObject chain = Instantiate(hookPrefab, chainContainer);
-            chain.transform.localPosition = localPos;
+            float anchorX = hookAnchors[h].x;
+
+            var hookRootGo = new GameObject($"HookChain_{h}");
+            Transform hookRoot = hookRootGo.transform;
+            hookRoot.SetParent(chainContainer, false);
+            hookRoot.localPosition = new Vector3(anchorX, 0f, 0f);
+            hookRoot.localRotation = Quaternion.identity;
+
+            Instantiate(chainHookPrefab, hookRoot);
+
+            if (chainLinkPrefab == null || linksPerChain <= 0)
+                continue;
+
+            for (int i = 0; i < linksPerChain; i++)
+            {
+                GameObject linkGo = Instantiate(chainLinkPrefab, hookRoot);
+                Transform t = linkGo.transform;
+                t.localPosition = firstLinkLocalOffset + new Vector3(0f, -i * chainLinkStepY, 0f);
+                t.localRotation = i % 2 == 1
+                    ? Quaternion.Euler(-90f, 0f, 90f)
+                    : Quaternion.Euler(-90f, 0f, 0f);
+            }
         }
     }
 
