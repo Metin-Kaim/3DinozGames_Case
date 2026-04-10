@@ -6,36 +6,30 @@ public class ChainRingHandler : MonoBehaviour
     [SerializeField] private ChainRingHandler upperRing;
     [SerializeField] private List<ChainRingHandler> lowerRings = new();
 
-    private Rigidbody _rigidbody;
-    private FixedJoint _fixedJoint;
+    [SerializeField] private Rigidbody rigidbody;
+    [SerializeField] private FixedJoint fixedJoint;
 
-    public Rigidbody Rb => _rigidbody;
+    public Rigidbody Rb => rigidbody;
 
     public ChainRingHandler UpperRing => upperRing;
     public List<ChainRingHandler> LowerRings => lowerRings;
-
-    private void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-        _fixedJoint = GetComponent<FixedJoint>();
-    }
 
     public void ConnectAbove(ChainRingHandler upper)
     {
         upperRing = upper;
         upper?.lowerRings.Add(this);
 
-        if (Rb == null || _fixedJoint == null)
+        if (Rb == null || fixedJoint == null)
             return;
 
         if (upper != null)
         {
-            _fixedJoint.connectedBody = upper.Rb;
+            fixedJoint.connectedBody = upper.Rb;
             Rb.isKinematic = false;
         }
         else
         {
-            _fixedJoint.connectedBody = null;
+            fixedJoint.connectedBody = null;
             Rb.isKinematic = true;
         }
     }
