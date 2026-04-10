@@ -93,7 +93,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upperRing: {fileID: 0}
   lowerRings: []
-  rigidbody: {fileID: 1053253171377405102}
+  rb: {fileID: 1053253171377405102}
   fixedJoint: {fileID: 7709643166688193723}
 --- !u!1 &776997235106520268
 GameObject:
@@ -405,7 +405,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7050794442972914578
 Transform:
   m_ObjectHideFlags: 0
