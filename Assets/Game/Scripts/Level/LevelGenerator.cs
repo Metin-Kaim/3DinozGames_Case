@@ -1,21 +1,23 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    [Header("References")]
-    public GameObject stickPrefab;
-    public StickLayoutConfig layoutConfig;
-    public Transform stickContainer;
+    [Header("Sticks")]
+    [SerializeField] private GameObject stickPrefab;
+    [SerializeField] private StickLayoutConfig layoutConfig;
+    [SerializeField] private Transform stickContainer;
+    [Range(1, 5)]
+    [SerializeField] private int stickCount = 3;
+    [SerializeField] private float spacingX = 1.5f;
+    [SerializeField] private float spacingY = 1.5f;
 
-    [Header("Level")]
-    [Range(1, 10)]
-    public int stickCount = 5;
-
-    [Header("Spacing")]
-    public float spacingX = 2.5f;
-    public float spacingY = 2.5f;
+    [Header("Chains")]
+    [SerializeField] private GameObject hookPrefab;
+    [SerializeField] private Transform chainContainer;
+    [Range(1, 3)]
+    [SerializeField] private int chainCount = 2;
+    [SerializeField] private float chainSpacingX = 1.5f;
 
     private void Awake()
     {
@@ -25,28 +27,60 @@ public class LevelGenerator : MonoBehaviour
             containerGo.transform.SetParent(transform, false);
             stickContainer = containerGo.transform;
         }
+
+        if (chainContainer == null)
+        {
+            var chainGo = new GameObject("ChainContainer");
+            chainGo.transform.SetParent(transform, false);
+            chainContainer = chainGo.transform;
+        }
     }
 
     private void Start()
     {
         SpawnSticks();
+        SpawnChains();
     }
 
     private void SpawnSticks()
     {
         Vector2Int grid = layoutConfig.GetGrid(stickCount);
 
-        List<Vector3> localPositions = GeneratePositions(stickCount, grid, spacingX, spacingY);
+        List<Vector3> localPositions = GenerateStickPositions(stickCount, grid, spacingX, spacingY);
 
         foreach (Vector3 localPos in localPositions)
         {
             GameObject stick = Instantiate(stickPrefab, stickContainer);
-           stick.transform.localPosition = localPos;
-            stick.transform.localRotation = Quaternion.identity;
+            stick.transform.localPosition = localPos;
         }
     }
 
-    private List<Vector3> GeneratePositions(int stickCount, Vector2Int grid, float spacingX, float spacingY)
+    private void SpawnChains()
+    {
+        if (hookPrefab == null || chainCount <= 0)
+            return;
+
+        List<Vector3> localPositions = GenerateChainPositions(chainCount, chainSpacingX);
+
+        foreach (Vector3 localPos in localPositions)
+        {
+            GameObject chain = Instantiate(hookPrefab, chainContainer);
+            chain.transform.localPosition = localPos;
+        }
+    }
+
+    private List<Vector3> GenerateChainPositions(int count, float spacingX)
+    {
+        List<Vector3> positions = new(count);
+        float startX = -(count - 1) * spacingX * 0.5f;
+
+        for (int i = 0; i < count; i++)
+            positions.Add(new Vector3(startX + i * spacingX, 0f, 0f));
+
+        return positions;
+    }
+
+    private List<Vector3> GenerateStickPositions(int stickCount, Vector2Int grid, float spacingX, float spacingY)
     {
         List<Vector3> positions = new();
 
