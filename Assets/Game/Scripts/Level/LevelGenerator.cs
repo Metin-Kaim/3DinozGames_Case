@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -22,13 +21,15 @@ public class LevelGenerator : MonoBehaviour
     [Header("Chains — Hook")]
     [SerializeField] private GameObject chainHookPrefab;
 
-    [Header("Chains — Links")]
-    [FormerlySerializedAs("hookPrefab")]
-    [SerializeField] private GameObject chainLinkPrefab;
-    [Min(1)]
-    [SerializeField] private int linksPerChain = 5;
-    [SerializeField] private float chainLinkStepY = 0.4f;
-    [SerializeField] private Vector3 firstLinkLocalOffset = new Vector3(0f, -0.4f, 0f);
+    [Header("Chains — Rings")]
+    [SerializeField] private ChainRingHandler chainRingPrefab;
+    [SerializeField] private float ringStepY = 0.4f;
+    [SerializeField] private Vector3 firstRingLocalOffset = new Vector3(0f, -0.4f, 0f);
+
+    [Header("Chains — Fork tree")]
+    [Tooltip("Kök: baseRingCount = fork öncesi düz segment. Her dal kendi baseRingCount ile fork sonrası halkaları tanımlar; branches ile iç içe fork.")]
+    [SerializeField] private ChainForkNode chainRoot = new ChainForkNode { baseRingCount = 5 };
+    [SerializeField] private float forkBranchSpacingX = 0.4f;
 
     private void Awake()
     {
@@ -85,19 +86,65 @@ public class LevelGenerator : MonoBehaviour
 
             Instantiate(chainHookPrefab, hookRoot);
 
-            if (chainLinkPrefab == null || linksPerChain <= 0)
+            if (chainRingPrefab == null || chainRoot == null)
                 continue;
 
-            for (int i = 0; i < linksPerChain; i++)
-            {
-                GameObject linkGo = Instantiate(chainLinkPrefab, hookRoot);
-                Transform t = linkGo.transform;
-                t.localPosition = firstLinkLocalOffset + new Vector3(0f, -i * chainLinkStepY, 0f);
-                t.localRotation = i % 2 == 1
-                    ? Quaternion.Euler(-90f, 0f, 90f)
-                    : Quaternion.Euler(-90f, 0f, 0f);
-            }
+            SpawnForkNodeRecursive(chainRoot, hookRoot, null, 0, 0f);
         }
+    }
+
+    private void SpawnForkNodeRecursive(ChainForkNode node, Transform hookRoot, ChainRingHandler attachTo, int startDepth, float localX)
+    {
+        if (node == null || node.baseRingCount < 1)
+            return;
+
+        ChainRingHandler prev = attachTo;
+
+        for (int i = 0; i < node.baseRingCount; i++)
+        {
+            int depth = startDepth + i;
+            float y = firstRingLocalOffset.y - depth * ringStepY;
+            Vector3 localPos = new Vector3(firstRingLocalOffset.x + localX, y, firstRingLocalOffset.z);
+            prev = SpawnRing(hookRoot, localPos, depth, localX, prev);
+        }
+
+        if (node.branches == null || node.branches.Count == 0)
+            return;
+
+        ChainRingHandler forkPoint = prev;
+        int childStartDepth = startDepth + node.baseRingCount;
+
+        for (int b = 0; b < node.branches.Count; b++)
+        {
+            float xOff = GetForkBranchLocalX(b, node.branches.Count, forkBranchSpacingX);
+            SpawnForkNodeRecursive(node.branches[b], hookRoot, forkPoint, childStartDepth, localX + xOff);
+        }
+    }
+
+    private static float GetForkBranchLocalX(int branchIndex, int branchCount, float forkBranchSpacingX)
+    {
+        if (branchCount <= 1)
+            return 0f;
+
+        float startX = -((branchCount - 1) * 0.5f) * forkBranchSpacingX;
+        return startX + branchIndex * forkBranchSpacingX;
+    }
+
+    private ChainRingHandler SpawnRing(Transform hookRoot, Vector3 localPosition, int depthFromHook, float localXOffset, ChainRingHandler upperRing)
+    {
+        ChainRingHandler handler = Instantiate(chainRingPrefab, hookRoot);
+        Transform t = handler.transform;
+        t.localPosition = localPosition;
+
+        float zTwist = depthFromHook % 2 == 1 ? 90f : 0f;
+        // Mesh genelde +/- X’te aynı görünmez; sağ taraftaki (pozitif localX) dallarda Z işaretini yansıt.
+        if (localXOffset > 0.0001f)
+            zTwist = -zTwist;
+
+        t.localRotation = Quaternion.Euler(-90f, 0f, zTwist);
+
+        handler.ConnectAbove(upperRing);
+        return handler;
     }
 
     private List<Vector3> GenerateChainPositions(int count, float spacingX)

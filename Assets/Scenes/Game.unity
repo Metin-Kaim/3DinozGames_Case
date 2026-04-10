@@ -900,11 +900,18 @@ MonoBehaviour:
   hookSpacingX: 1.5
   chainHookPrefab: {fileID: 1825282950432131733, guid: d65eaaf4273650045a946977af42a6cc,
     type: 3}
-  chainLinkPrefab: {fileID: 583669382024433804, guid: 515c07f6cb68d3c48a2f837a8c1b6a3d,
+  chainRingPrefab: {fileID: -3175563266342914538, guid: 515c07f6cb68d3c48a2f837a8c1b6a3d,
     type: 3}
-  linksPerChain: 5
-  chainLinkStepY: 0.45
-  firstLinkLocalOffset: {x: 0, y: -0.35, z: -0.2}
+  ringStepY: 0.42
+  firstRingLocalOffset: {x: 0, y: -0.35, z: -0.2}
+  chainRoot:
+    baseRingCount: 3
+    branches:
+    - baseRingCount: 4
+      branches: []
+    - baseRingCount: 3
+      branches: []
+  forkBranchSpacingX: 0.4
 --- !u!1 &1394569225
 GameObject:
   m_ObjectHideFlags: 0
