@@ -57,7 +57,6 @@ namespace Assets.Game.Scripts.Level
 
         private void Start()
         {
-
             SpawnSticks();
             SpawnChains();
         }
@@ -105,6 +104,7 @@ namespace Assets.Game.Scripts.Level
             {
                 StickHandler stick = Instantiate(stickPrefab, stickContainer);
                 stick.transform.localPosition = localPos;
+                stick.Init();
                 LevelSignals.Instance?.onStickSpawned?.Invoke(stick);
             }
         }

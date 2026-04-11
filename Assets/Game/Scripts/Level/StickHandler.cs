@@ -1,7 +1,7 @@
 using UnityEngine;
 using Assets.Game.Scripts.Signals;
-using System;
 using DG.Tweening;
+using Assets.Game.Scripts.Enum;
 
 namespace Assets.Game.Scripts.Level
 {
@@ -13,10 +13,23 @@ namespace Assets.Game.Scripts.Level
         [SerializeField] private float ringStackSpacing;
 
         private int _ringCount;
+        private ColorType _colorType;
 
+        public ColorType ColorType => _colorType;
+
+
+        public void Init()
+        {
+            _colorType = (ColorType)Random.Range(0, System.Enum.GetValues(typeof(ColorType)).Length);
+            Color? color = ColorSignals.Instance.onGetColor?.Invoke(_colorType);
+            if (color != null)
+                GetComponentInChildren<MeshRenderer>().material.color = color.Value;
+            else Debug.LogError($"Color preset for {_colorType} not found");
+        }
+        
         public bool CanAcceptRing() => _ringCount < MaxRings;
 
-        public void PlayDisappearAnimation(float duration, Action onComplete)
+        public void PlayDisappearAnimation(float duration, System.Action onComplete)
         {
             transform.DOKill();
             transform.DOScale(Vector3.zero, duration)

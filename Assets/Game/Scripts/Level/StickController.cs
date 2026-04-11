@@ -15,7 +15,7 @@ namespace Assets.Game.Scripts.Level
         [SerializeField] private float stickRealignDelay = 0.08f;
 
         private readonly List<StickHandler> _sticks = new();
-
+        
         private void OnEnable()
         {
             if (LevelSignals.Instance == null)
