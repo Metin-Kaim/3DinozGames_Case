@@ -488,7 +488,7 @@ MonoBehaviour:
   spacingX: 1.5
   spacingY: 1.5
   chainContainer: {fileID: 1394569226}
-  hookCount: 2
+  hookCount: 3
   hookSpacingX: 1.5
   chainHookPrefab: {fileID: 1825282950432131733, guid: d65eaaf4273650045a946977af42a6cc,
     type: 3}
@@ -679,5 +679,5 @@ SceneRoots:
   - {fileID: 407264477}
   - {fileID: 503196125}
   - {fileID: 1346961107}
-  - {fileID: 1341098730}
   - {fileID: 1994312900}
+  - {fileID: 1341098730}
