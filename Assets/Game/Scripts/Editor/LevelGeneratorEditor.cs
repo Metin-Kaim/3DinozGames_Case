@@ -112,6 +112,10 @@ namespace Assets.Game.Scripts.Editor
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField("Hook chains", EditorStyles.boldLabel);
 
+            EditorGUILayout.HelpBox(
+                "Gövde ve isteğe bağlı dallar. Seçili fırça ile tıklayıp sürükleyerek halkaları boyayın; Save ile JSON’a yazılır.",
+                MessageType.None);
+
             EditorGUILayout.BeginHorizontal();
             for (int hookIndex = 0; hookIndex < _hookCount; hookIndex++)
                 DrawHookChainSegmentGui(hookIndex);
