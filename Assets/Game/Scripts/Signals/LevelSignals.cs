@@ -13,11 +13,7 @@ namespace Assets.Game.Scripts.Signals
         public Func<StickHandler> onGetStick;
         public Func<IReadOnlyList<StickHandler>> onGetSticks;
         public UnityAction<StickHandler> onStickFilled;
-
-        /// <summary>Stick sayısına göre yerel grid pozisyonları (LevelGenerator kaynaklı).</summary>
         public Func<int, List<Vector3>> onGetStickLocalPositions;
-
-        /// <summary>Her stick spawn edildiğinde tetiklenir; StickController listeye ekler.</summary>
         public UnityAction<StickHandler> onStickSpawned;
 
         private void Awake()

@@ -7,23 +7,22 @@ namespace Assets.Game.Scripts.Level
 {
     public class ChainController : MonoBehaviour
     {
-        private const float BottomYEpsilon = 0.001f;
-
         [SerializeField] private float attachTweenDuration = 0.35f;
 
-        private readonly List<ChainRingHandler> _rings = new();
+        private readonly List<RingHandler> _rings = new();
 
-        public List<ChainRingHandler> Rings => _rings;
-
-        public void Init(List<ChainRingHandler> rings)
+        public void Init(List<RingHandler> rings, byte[] ringColorBytes)
         {
             _rings.Clear();
             if (rings == null)
                 return;
 
             _rings.AddRange(rings);
-            foreach (ChainRingHandler ring in _rings)
-                ring.Init(this);
+
+            for (int i = 0; i < _rings.Count; i++)
+            {
+                _rings[i].Init(this, (ColorType)ringColorBytes[i]);
+            }
         }
 
         public void OnRingClicked()
@@ -35,16 +34,11 @@ namespace Assets.Game.Scripts.Level
             if (sticks == null || sticks.Count == 0)
                 return;
 
-            List<ChainRingHandler> bottomLeaves = GetBottomLeafRings();
+            List<RingHandler> bottomLeaves = GetBottomLeafRings();
             if (bottomLeaves.Count == 0)
                 return;
 
-            // Vector3 chainPos = transform.position;
-            // bottomLeaves.Sort((a, b) =>
-            //     (a.transform.position - chainPos).sqrMagnitude.CompareTo(
-            //         (b.transform.position - chainPos).sqrMagnitude));
-
-            foreach (ChainRingHandler candidateRing in bottomLeaves)
+            foreach (RingHandler candidateRing in bottomLeaves)
             {
                 StickHandler stick = FindClosestMatchingStick(candidateRing, sticks);
                 if (stick == null)
@@ -57,7 +51,7 @@ namespace Assets.Game.Scripts.Level
             }
         }
 
-        private static StickHandler FindClosestMatchingStick(ChainRingHandler candidateRing, IReadOnlyList<StickHandler> sticks)
+        private static StickHandler FindClosestMatchingStick(RingHandler candidateRing, IReadOnlyList<StickHandler> sticks)
         {
             StickHandler best = null;
             float bestSqr = float.PositiveInfinity;
@@ -80,10 +74,10 @@ namespace Assets.Game.Scripts.Level
 
             return best;
         }
-        private List<ChainRingHandler> GetBottomLeafRings()
+        private List<RingHandler> GetBottomLeafRings()
         {
-            var leaves = new List<ChainRingHandler>();
-            foreach (ChainRingHandler r in _rings)
+            var leaves = new List<RingHandler>();
+            foreach (RingHandler r in _rings)
             {
                 if (r.LowerRings != null && r.LowerRings.Count != 0)
                     continue;

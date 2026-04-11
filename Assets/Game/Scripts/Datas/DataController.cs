@@ -22,7 +22,6 @@ namespace Assets.Game.Scripts.Datas
         {
             if (ColorSignals.Instance != null)
                 ColorSignals.Instance.onGetColor += colorPreset.GetColor;
-
         }
 
         private void OnDisable()

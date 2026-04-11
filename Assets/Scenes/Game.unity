@@ -480,25 +480,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b1392d458f2d043ad7708b4fbf4fe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelIndex: 1
   stickPrefab: {fileID: 7722334455667788992, guid: 34d1023d2011c93448972996d801c5d4,
     type: 3}
   layoutConfig: {fileID: 11400000, guid: 924f7a5cb1990e74da13d99ba3606d80, type: 2}
   stickContainer: {fileID: 1938112533}
-  stickCount: 5
   spacingX: 1.5
   spacingY: 1.5
   chainContainer: {fileID: 1394569226}
-  hookCount: 3
   hookSpacingX: 1.5
-  chainHookPrefab: {fileID: 1825282950432131733, guid: d65eaaf4273650045a946977af42a6cc,
+  chainHookPrefab: {fileID: 7722334455667788991, guid: d65eaaf4273650045a946977af42a6cc,
     type: 3}
-  chainRingPrefab: {fileID: -3175563266342914538, guid: 515c07f6cb68d3c48a2f837a8c1b6a3d,
+  ringPrefab: {fileID: -3175563266342914538, guid: 515c07f6cb68d3c48a2f837a8c1b6a3d,
     type: 3}
   ringStepY: 0.37
   firstRingLocalOffset: {x: 0, y: -0.35, z: -0.2}
-  chainRoot:
-    baseRingCount: 10
-    branches: []
   forkBranchSpacingX: 0.4
 --- !u!1 &1346961105
 GameObject:

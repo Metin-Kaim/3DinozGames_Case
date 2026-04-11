@@ -84,23 +84,22 @@ namespace Assets.Game.Scripts.Level
 
         private void RealignSticks()
         {
-            int count = _sticks.Count;
-            if (count == 0)
+            int stickCount = _sticks.Count;
+            if (stickCount == 0)
                 return;
 
-            List<Vector3> positions = LevelSignals.Instance?.onGetStickLocalPositions?.Invoke(count);
-            if (positions == null || positions.Count < count)
+            List<Vector3> positions = LevelSignals.Instance?.onGetStickLocalPositions?.Invoke(stickCount);
+            if (positions == null || positions.Count < stickCount)
                 return;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < stickCount; i++)
             {
-                StickHandler s = _sticks[i];
-                if (s == null)
+                StickHandler stick = _sticks[i];
+                if (stick == null)
                     continue;
 
-                Transform t = s.transform;
-                t.DOKill();
-                t.DOLocalMove(positions[i], stickRealignDuration).SetEase(Ease.OutQuad);
+                stick.transform.DOKill();
+                stick.transform.DOLocalMove(positions[i], stickRealignDuration).SetEase(Ease.OutQuad);
             }
         }
 

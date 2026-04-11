@@ -6,10 +6,10 @@ using UnityEngine;
 
 namespace Assets.Game.Scripts.Level
 {
-    public class ChainRingHandler : MonoBehaviour
+    public class RingHandler : MonoBehaviour
     {
-        [SerializeField] private ChainRingHandler upperRing;
-        [SerializeField] private List<ChainRingHandler> lowerRings = new();
+        [SerializeField] private RingHandler upperRing;
+        [SerializeField] private List<RingHandler> lowerRings = new();
 
         [SerializeField] private Rigidbody rb;
         [SerializeField] private FixedJoint fixedJoint;
@@ -19,12 +19,12 @@ namespace Assets.Game.Scripts.Level
 
         public ColorType ColorType => _colorType;
         public Rigidbody Rb => rb;
-        public List<ChainRingHandler> LowerRings => lowerRings;
+        public List<RingHandler> LowerRings => lowerRings;
 
-        public void Init(ChainController chainHook)
+        public void Init(ChainController chainHook, ColorType colorType)
         {
             _chainHook = chainHook;
-            _colorType = (ColorType)Random.Range(0, System.Enum.GetValues(typeof(ColorType)).Length);
+            _colorType = colorType;
             Color? color = ColorSignals.Instance.onGetColor?.Invoke(_colorType);
             if (color != null)
                 GetComponentInChildren<MeshRenderer>().material.color = color.Value;
@@ -36,23 +36,23 @@ namespace Assets.Game.Scripts.Level
             _chainHook?.OnRingClicked();
         }
 
-        public void ConnectAbove(ChainRingHandler upper)
+        public void ConnectAbove(RingHandler upper)
         {
             upperRing = upper;
             upper?.lowerRings.Add(this);
 
-            if (Rb == null || fixedJoint == null)
+            if (rb == null || fixedJoint == null)
                 return;
 
             if (upper != null)
             {
                 fixedJoint.connectedBody = upper.Rb;
-                Rb.isKinematic = false;
+                rb.isKinematic = false;
             }
             else
             {
                 fixedJoint.connectedBody = null;
-                Rb.isKinematic = true;
+                rb.isKinematic = true;
             }
         }
 

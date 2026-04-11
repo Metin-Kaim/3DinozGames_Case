@@ -27,7 +27,7 @@ namespace Assets.Game.Scripts.Input
                 if (!Physics.Raycast(ray, out RaycastHit hit, maxRayDistance, clickableRingLayer))
                     return;
 
-                ChainRingHandler ring = hit.collider.GetComponentInParent<ChainRingHandler>();
+                RingHandler ring = hit.collider.GetComponentInParent<RingHandler>();
                 ring?.NotifyClicked();
             }
 

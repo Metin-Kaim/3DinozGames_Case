@@ -12,8 +12,12 @@ namespace Assets.Game.Scripts.Datas.UnityValues
 
         private Dictionary<ColorType, Color> colorPresetMap;
 
+        public IReadOnlyList<ColorPresetEntry> PresetEntries => colorPresetEntries;
+
         public void Init()
         {
+            if(colorPresetMap != null) return;
+            
             colorPresetMap = new Dictionary<ColorType, Color>();
             foreach (var entry in colorPresetEntries)
             {

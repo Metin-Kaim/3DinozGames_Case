@@ -17,10 +17,9 @@ namespace Assets.Game.Scripts.Level
 
         public ColorType ColorType => _colorType;
 
-
-        public void Init()
+        public void Init(ColorType colorType)
         {
-            _colorType = (ColorType)Random.Range(0, System.Enum.GetValues(typeof(ColorType)).Length);
+            _colorType = colorType;
             Color? color = ColorSignals.Instance.onGetColor?.Invoke(_colorType);
             if (color != null)
                 GetComponentInChildren<MeshRenderer>().material.color = color.Value;
