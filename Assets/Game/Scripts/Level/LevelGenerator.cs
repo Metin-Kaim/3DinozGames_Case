@@ -1,15 +1,15 @@
+using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using Assets.Game.Scripts.Signals;
-using Assets.Game.Scripts.Datas.UnityValues;
 using Assets.Game.Scripts.Datas.DataValues;
+using Assets.Game.Scripts.Datas.UnityValues;
 
 namespace Assets.Game.Scripts.Level
 {
     public class LevelGenerator : MonoBehaviour
     {
-        [Header("Sticks")]
+        [Header("Sticks — Spawn")]
         [SerializeField] private StickHandler stickPrefab;
         [SerializeField] private StickLayoutConfig layoutConfig;
         [SerializeField] private Transform stickContainer;
@@ -17,10 +17,6 @@ namespace Assets.Game.Scripts.Level
         [SerializeField] private int stickCount = 3;
         [SerializeField] private float spacingX = 1.5f;
         [SerializeField] private float spacingY = 1.5f;
-        [SerializeField] private float stickDisappearDuration = 0.4f;
-        [SerializeField] private float stickRealignDuration = 0.35f;
-        [Tooltip("Dolu stick listeden düştükten sonra kalanların hizalanması için kısa bekleme (saniye). 0 = anında.")]
-        [SerializeField] private float stickRealignDelay = 0.08f;
 
         [Header("Chains — Placement")]
         [SerializeField] private Transform chainContainer;
@@ -43,146 +39,73 @@ namespace Assets.Game.Scripts.Level
 
         private int _ringSpawnIndexInChain;
 
-        private readonly List<StickHandler> _sticks = new();
-        private readonly List<List<ChainRingHandler>> _chains = new();
-        private readonly Dictionary<int, List<ChainRingHandler>> _chainsByHookIndex = new();
-
-        public IReadOnlyList<StickHandler> Sticks => _sticks;
-        public IReadOnlyList<List<ChainRingHandler>> Chains => _chains;
-        public IReadOnlyDictionary<int, List<ChainRingHandler>> ChainsByHookIndex => _chainsByHookIndex;
-
-        private void Awake()
+        private void OnEnable()
         {
-            if (stickContainer == null)
-            {
-                var containerGo = new GameObject("StickContainer");
-                containerGo.transform.SetParent(transform, false);
-                stickContainer = containerGo.transform;
-            }
-
-            if (chainContainer == null)
-            {
-                var chainGo = new GameObject("ChainContainer");
-                chainGo.transform.SetParent(transform, false);
-                chainContainer = chainGo.transform;
-            }
-
-        }
-
-        private void Start()
-        {
-            EnsureLevelSignals();
-            SpawnSticks();
-            RegisterStickProvider();
-            SpawnChains();
-        }
-
-        private void OnDestroy()
-        {
-            DOTween.Kill(this);
-            if (LevelSignals.Instance != null)
-                LevelSignals.Instance.onStickFilled -= OnStickFilled;
-        }
-
-        private static void EnsureLevelSignals()
-        {
-            if (LevelSignals.Instance != null)
+            if (LevelSignals.Instance == null)
                 return;
-
-            var go = new GameObject("LevelSignals");
-            go.AddComponent<LevelSignals>();
+                
+            LevelSignals.Instance.onGetStickLocalPositions += BuildStickLocalPositions;
         }
 
-        private void RegisterStickProvider()
+        private void OnDisable()
         {
             if (LevelSignals.Instance == null)
                 return;
 
-            LevelSignals.Instance.onGetStick = GetNextAvailableStick;
-            LevelSignals.Instance.onStickFilled += OnStickFilled;
+            LevelSignals.Instance.onGetStickLocalPositions -= BuildStickLocalPositions;
         }
 
-        private void OnStickFilled(StickHandler stick)
+        private void Start()
         {
-            if (stick == null)
-                return;
 
-            // Listeden hemen çıkar: RealignSticks içindeki DOKill, küçülme tween'ini öldürmesin diye
-            // (stick hâlâ _sticks içindeyken realign, aynı frame'de başka stick dolunca patlıyordu).
-            if (!_sticks.Remove(stick))
-                return;
-
-            ScheduleRealignSticks();
-
-            stick.PlayDisappearAnimation(stickDisappearDuration, () =>
-            {
-                if (stick != null)
-                    Destroy(stick.gameObject);
-            });
+            SpawnSticks();
+            SpawnChains();
         }
 
-        private void ScheduleRealignSticks()
+        private List<Vector3> BuildStickLocalPositions(int count)
         {
-            if (stickRealignDelay <= 0f)
-            {
-                RealignSticks();
-                return;
-            }
-
-            DOVirtual.DelayedCall(stickRealignDelay, RealignSticksIfAlive).SetTarget(this);
-        }
-
-        private void RealignSticksIfAlive()
-        {
-            if (this == null)
-                return;
-
-            RealignSticks();
-        }
-
-        private void RealignSticks()
-        {
-            int count = _sticks.Count;
-            if (count == 0)
-                return;
+            var positions = new List<Vector3>();
+            if (layoutConfig == null || count <= 0)
+                return positions;
 
             Vector2Int grid = layoutConfig.GetGrid(count);
-            List<Vector3> positions = GenerateStickPositions(count, grid, spacingX, spacingY);
 
-            for (int i = 0; i < count; i++)
+            int row = grid.x;
+            int col = grid.y;
+            float yCenterOffset = row > 1 ? (row - 1) * spacingY * 0.5f : 0f;
+            int index = 0;
+
+            for (int r = 0; r < row; r++)
             {
-                StickHandler s = _sticks[i];
-                if (s == null)
-                    continue;
+                int itemsInRow = Mathf.Min(col, count - index);
+                float startX = -(itemsInRow - 1) * spacingX / 2f;
 
-                Transform t = s.transform;
-                t.DOKill();
-                t.DOLocalMove(positions[i], stickRealignDuration).SetEase(Ease.OutQuad);
-            }
-        }
-
-        private StickHandler GetNextAvailableStick()
-        {
-            foreach (StickHandler stick in _sticks)
-            {
-                if (stick != null && stick.CanAcceptRing())
-                    return stick;
+                for (int c = 0; c < itemsInRow; c++)
+                {
+                    float x = startX + c * spacingX;
+                    float y = yCenterOffset - r * spacingY;
+                    positions.Add(new Vector3(x, y, 0));
+                    index++;
+                    if (index >= count)
+                        return positions;
+                }
             }
 
-            return null;
+            return positions;
         }
 
         private void SpawnSticks()
         {
-            Vector2Int grid = layoutConfig.GetGrid(stickCount);
+            if (stickPrefab == null || layoutConfig == null || stickContainer == null || stickCount <= 0)
+                return;
 
-            List<Vector3> localPositions = GenerateStickPositions(stickCount, grid, spacingX, spacingY);
+            List<Vector3> localPositions = BuildStickLocalPositions(stickCount);
 
             foreach (Vector3 localPos in localPositions)
             {
                 StickHandler stick = Instantiate(stickPrefab, stickContainer);
                 stick.transform.localPosition = localPos;
-                _sticks.Add(stick);
+                LevelSignals.Instance?.onStickSpawned?.Invoke(stick);
             }
         }
 
@@ -213,11 +136,7 @@ namespace Assets.Game.Scripts.Level
                 var chainRings = new List<ChainRingHandler>();
                 SpawnForkNodeRecursive(chainRoot, hookRoot, null, 0, 0f, i, chainRings);
 
-                _chains.Add(chainRings);
-                _chainsByHookIndex[i] = chainRings;
-
-                if (chainController != null)
-                    chainController.Init(chainRings);
+                chainController?.Init(chainRings);
             }
         }
 
@@ -266,7 +185,6 @@ namespace Assets.Game.Scripts.Level
             t.localPosition = localPosition;
 
             float zTwist = depthFromHook % 2 == 1 ? 90f : 0f;
-            // Mesh genelde +/- X’te aynı görünmez; sağ taraftaki (pozitif localX) dallarda Z işaretini yansıt.
             if (localXOffset > 0.0001f)
                 zTwist = -zTwist;
 
@@ -284,40 +202,6 @@ namespace Assets.Game.Scripts.Level
 
             for (int i = 0; i < count; i++)
                 positions.Add(new Vector3(startX + i * spacingX, 0f, 0f));
-
-            return positions;
-        }
-
-        private List<Vector3> GenerateStickPositions(int stickCount, Vector2Int grid, float spacingX, float spacingY)
-        {
-            List<Vector3> positions = new();
-
-            int row = grid.x;
-            int col = grid.y;
-
-            float yCenterOffset = row > 1 ? (row - 1) * spacingY * 0.5f : 0f;
-
-            int index = 0;
-
-            for (int r = 0; r < row; r++)
-            {
-                int itemsInRow = Mathf.Min(col, stickCount - index);
-
-                float startX = -(itemsInRow - 1) * spacingX / 2f;
-
-                for (int c = 0; c < itemsInRow; c++)
-                {
-                    float x = startX + c * spacingX;
-                    float y = yCenterOffset - r * spacingY;
-
-                    positions.Add(new Vector3(x, y, 0));
-
-                    index++;
-
-                    if (index >= stickCount)
-                        return positions;
-                }
-            }
 
             return positions;
         }
