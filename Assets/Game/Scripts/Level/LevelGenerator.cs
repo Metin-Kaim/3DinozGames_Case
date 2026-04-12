@@ -180,6 +180,13 @@ namespace Assets.Game.Scripts.Level
                 hookRoot.localPosition = new Vector3(hookPosX, 0f, 0f);
                 hookRoot.localRotation = Quaternion.identity;
 
+                var ringContainerGo = new GameObject("RingContainer");
+                Transform ringContainer = ringContainerGo.transform;
+                ringContainer.SetParent(hookRoot, false);
+                ringContainer.localPosition = Vector3.zero;
+                ringContainer.localRotation = Quaternion.identity;
+                ringContainer.localScale = Vector3.one;
+
                 ChainController chainController = Instantiate(chainHookPrefab, hookRoot);
 
                 HookLevelData hook = _levelData.hooks[i];
@@ -189,14 +196,14 @@ namespace Assets.Game.Scripts.Level
 
                 _ringSpawnIndexInChain = 0;
                 var chainRings = new List<RingHandler>();
-                SpawnChainRings(hook, hookRoot, i, chainRings);
+                SpawnChainRings(hook, ringContainer, i, chainRings);
 
                 byte[] allRingColorBytes = GetAllRingColorBytesByHook(hook);
-                chainController.Init(chainRings, allRingColorBytes);
+                chainController.Init(chainRings, allRingColorBytes, ringContainer);
             }
         }
 
-        private void SpawnChainRings(HookLevelData hook, Transform hookRoot, int hookIndex, List<RingHandler> chainRings)
+        private void SpawnChainRings(HookLevelData hook, Transform ringsParent, int hookIndex, List<RingHandler> chainRings)
         {
             if (hook == null)
                 return;
@@ -210,7 +217,7 @@ namespace Assets.Game.Scripts.Level
                 int depth = startDepth + i;
                 float y = firstRingLocalOffset.y - depth * ringStepY;
                 Vector3 localPos = new Vector3(firstRingLocalOffset.x + localX, y, firstRingLocalOffset.z);
-                prev = SpawnRing(hookRoot, localPos, depth, localX, prev, hookIndex, chainRings);
+                prev = SpawnRing(ringsParent, localPos, depth, localX, prev, hookIndex, chainRings);
             }
 
             if (!hook.fork)
@@ -220,13 +227,13 @@ namespace Assets.Game.Scripts.Level
             int childStartDepth = startDepth + hook.baseRingCount;
 
             float branch1LocalX = GetForkBranchLocalX(0, 2, forkBranchSpacingX);
-            SpawnBranchRingStack(hook.branch1BaseRingCount, hookRoot, forkPoint, childStartDepth, localX + branch1LocalX, hookIndex, chainRings);
+            SpawnBranchRingStack(hook.branch1BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch1LocalX, hookIndex, chainRings);
 
             float branch2LocalX = GetForkBranchLocalX(1, 2, forkBranchSpacingX);
-            SpawnBranchRingStack(hook.branch2BaseRingCount, hookRoot, forkPoint, childStartDepth, localX + branch2LocalX, hookIndex, chainRings);
+            SpawnBranchRingStack(hook.branch2BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch2LocalX, hookIndex, chainRings);
         }
 
-        private void SpawnBranchRingStack(int ringCount, Transform hookRoot, RingHandler attachTo, int startDepth, float localX, int hookIndex, List<RingHandler> chainRings)
+        private void SpawnBranchRingStack(int ringCount, Transform ringsParent, RingHandler attachTo, int startDepth, float localX, int hookIndex, List<RingHandler> chainRings)
         {
             if (ringCount < 1)
                 return;
@@ -237,7 +244,7 @@ namespace Assets.Game.Scripts.Level
                 int depth = startDepth + i;
                 float y = firstRingLocalOffset.y - depth * ringStepY;
                 Vector3 localPos = new Vector3(firstRingLocalOffset.x + localX, y, firstRingLocalOffset.z);
-                prev = SpawnRing(hookRoot, localPos, depth, localX, prev, hookIndex, chainRings);
+                prev = SpawnRing(ringsParent, localPos, depth, localX, prev, hookIndex, chainRings);
             }
         }
 
@@ -250,9 +257,9 @@ namespace Assets.Game.Scripts.Level
             return startX + branchIndex * forkBranchSpacingX;
         }
 
-        private RingHandler SpawnRing(Transform hookRoot, Vector3 localPosition, int depthFromHook, float localXOffset, RingHandler upperRing, int hookIndex, List<RingHandler> chainRings)
+        private RingHandler SpawnRing(Transform ringsParent, Vector3 localPosition, int depthFromHook, float localXOffset, RingHandler upperRing, int hookIndex, List<RingHandler> chainRings)
         {
-            RingHandler handler = Instantiate(ringPrefab, hookRoot);
+            RingHandler handler = Instantiate(ringPrefab, ringsParent);
             handler.gameObject.name = $"Hook{hookIndex}_Ring_{_ringSpawnIndexInChain++}";
 
             handler.transform.localPosition = localPosition;

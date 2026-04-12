@@ -47,7 +47,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d7b0a1c2f4567890abcdef12345679, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attachTweenDuration: 0.35
+  attachToStickTweenDuration: 0.35
+  enableChainSway: 1
+  swayFrequencyHz: 0.3
+  swayAmplitudeXDeg: 1.8
+  swayAmplitudeYDeg: 3.2
+  swayAmplitudeZDeg: 4.5
+  pushPunchStrength: 0.05
+  pushDuration: 0.2
+  pushVibrato: 5
+  pushElasticity: 0.3
+  pushStaggerSeconds: 0.018
 --- !u!1 &3358626864661945138
 GameObject:
   m_ObjectHideFlags: 0

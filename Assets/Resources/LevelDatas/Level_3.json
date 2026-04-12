@@ -1,0 +1,61 @@
+{
+    "stickCount": 5,
+    "hookCount": 3,
+    "timeLimitSeconds": 256,
+    "stickColorTypes": [
+        3,
+        0,
+        3,
+        2,
+        4
+    ],
+    "hooks": [
+        {
+            "baseRingCount": 4,
+            "fork": true,
+            "branch1BaseRingCount": 2,
+            "branch2BaseRingCount": 1,
+            "trunkRingColorTypes": [
+                3,
+                3,
+                4,
+                0
+            ],
+            "branch1RingColorTypes": [
+                2,
+                2
+            ],
+            "branch2RingColorTypes": [
+                2
+            ]
+        },
+        {
+            "baseRingCount": 4,
+            "fork": false,
+            "branch1BaseRingCount": 0,
+            "branch2BaseRingCount": 0,
+            "trunkRingColorTypes": [
+                0,
+                3,
+                3,
+                4
+            ],
+            "branch1RingColorTypes": [],
+            "branch2RingColorTypes": []
+        },
+        {
+            "baseRingCount": 4,
+            "fork": false,
+            "branch1BaseRingCount": 0,
+            "branch2BaseRingCount": 0,
+            "trunkRingColorTypes": [
+                3,
+                4,
+                0,
+                3
+            ],
+            "branch1RingColorTypes": [],
+            "branch2RingColorTypes": []
+        }
+    ]
+}

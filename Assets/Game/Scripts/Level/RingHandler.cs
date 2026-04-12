@@ -11,14 +11,10 @@ namespace Assets.Game.Scripts.Level
         [SerializeField] private RingHandler upperRing;
         [SerializeField] private List<RingHandler> lowerRings = new();
 
-        [SerializeField] private Rigidbody rb;
-        [SerializeField] private FixedJoint fixedJoint;
-
         private ChainController _chainHook;
         private ColorType _colorType;
 
         public ColorType ColorType => _colorType;
-        public Rigidbody Rb => rb;
         public List<RingHandler> LowerRings => lowerRings;
 
         public void Init(ChainController chainHook, ColorType colorType)
@@ -40,20 +36,6 @@ namespace Assets.Game.Scripts.Level
         {
             upperRing = upper;
             upper?.lowerRings.Add(this);
-
-            if (rb == null || fixedJoint == null)
-                return;
-
-            if (upper != null)
-            {
-                fixedJoint.connectedBody = upper.Rb;
-                rb.isKinematic = false;
-            }
-            else
-            {
-                fixedJoint.connectedBody = null;
-                rb.isKinematic = true;
-            }
         }
 
         public void DetachFromChainForStick()
@@ -62,15 +44,6 @@ namespace Assets.Game.Scripts.Level
             {
                 upperRing.lowerRings.Remove(this);
                 upperRing = null;
-            }
-
-            if (fixedJoint != null)
-                Destroy(fixedJoint);
-
-            if (rb != null)
-            {
-                rb.detectCollisions = false;
-                rb.isKinematic = true;
             }
         }
 
@@ -84,8 +57,8 @@ namespace Assets.Game.Scripts.Level
 
             transform.SetParent(stick.transform);
             transform.DOKill();
-            transform.DOLocalMove(localTarget, duration).SetEase(Ease.OutBack, .75f);
-            transform.DORotate(Vector3.zero, duration / 2f).SetEase(Ease.Linear);
+            transform.DOLocalMove(localTarget, duration).SetEase(Ease.OutBack, 0.75f);
+            transform.DOLocalRotate(Vector3.zero, duration / 2f).SetEase(Ease.Linear);
         }
     }
 }
