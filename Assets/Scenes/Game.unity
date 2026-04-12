@@ -1186,6 +1186,9 @@ MonoBehaviour:
   ringStepY: 0.37
   firstRingLocalOffset: {x: 0, y: -0.35, z: -0.2}
   forkBranchSpacingX: 0.4
+  forkBranch1FirstRingEulerWhenZ90: {x: -60, y: 90, z: 0}
+  forkBranch2FirstRingEulerWhenZ90: {x: -60, y: -90, z: 0}
+  forkBranchRingStepX: 0.12
 --- !u!1 &1346961105
 GameObject:
   m_ObjectHideFlags: 0

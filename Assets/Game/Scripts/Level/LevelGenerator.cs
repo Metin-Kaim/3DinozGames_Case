@@ -38,6 +38,12 @@ namespace Assets.Game.Scripts.Level
 
         [Header("Chains — Fork tree")]
         [SerializeField] private float forkBranchSpacingX = 0.4f;
+        [Tooltip("Branch 1 (sol dal): Z twist 90° olacak ilk ring için local Euler.")]
+        [SerializeField] private Vector3 forkBranch1FirstRingEulerWhenZ90 = new Vector3(-60f, 90f, 0f);
+        [Tooltip("Branch 2 (sağ dal): Z twist 90° olacak ilk ring için local Euler.")]
+        [SerializeField] private Vector3 forkBranch2FirstRingEulerWhenZ90 = new Vector3(-60f, -90f, 0f);
+        [Tooltip("Fork dalındaki her sonraki ring için X ekseninde ek offset (büyüklük; branch 1 sola, branch 2 sağa).")]
+        [SerializeField] private float forkBranchRingStepX = 0.15f;
 
         private int _levelIndex;
         private int _ringSpawnIndexInChain;
@@ -227,24 +233,39 @@ namespace Assets.Game.Scripts.Level
             int childStartDepth = startDepth + hook.baseRingCount;
 
             float branch1LocalX = GetForkBranchLocalX(0, 2, forkBranchSpacingX);
-            SpawnBranchRingStack(hook.branch1BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch1LocalX, hookIndex, chainRings);
+            SpawnBranchRingStack(hook.branch1BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch1LocalX, hookIndex, chainRings, forkBranchIndex: 0);
 
             float branch2LocalX = GetForkBranchLocalX(1, 2, forkBranchSpacingX);
-            SpawnBranchRingStack(hook.branch2BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch2LocalX, hookIndex, chainRings);
+            SpawnBranchRingStack(hook.branch2BaseRingCount, ringsParent, forkPoint, childStartDepth, localX + branch2LocalX, hookIndex, chainRings, forkBranchIndex: 1);
         }
 
-        private void SpawnBranchRingStack(int ringCount, Transform ringsParent, RingHandler attachTo, int startDepth, float localX, int hookIndex, List<RingHandler> chainRings)
+        private void SpawnBranchRingStack(int ringCount, Transform ringsParent, RingHandler attachTo, int startDepth, float localX, int hookIndex, List<RingHandler> chainRings, int forkBranchIndex)
         {
             if (ringCount < 1)
                 return;
+
+            float ringStepSign = forkBranchIndex == 0 ? -1f : 1f;
+            Vector3 forkFirstRingEulerWhenZ90 = forkBranchIndex == 0
+                ? forkBranch1FirstRingEulerWhenZ90
+                : forkBranch2FirstRingEulerWhenZ90;
 
             RingHandler prev = attachTo;
             for (int i = 0; i < ringCount; i++)
             {
                 int depth = startDepth + i;
                 float y = firstRingLocalOffset.y - depth * ringStepY;
-                Vector3 localPos = new Vector3(firstRingLocalOffset.x + localX, y, firstRingLocalOffset.z);
-                prev = SpawnRing(ringsParent, localPos, depth, localX, prev, hookIndex, chainRings);
+                float xOffset = localX + ringStepSign * i * forkBranchRingStepX;
+                Vector3 localPos = new Vector3(firstRingLocalOffset.x + xOffset, y, firstRingLocalOffset.z);
+
+                float zTwist = depth % 2 == 1 ? 90f : 0f;
+                if (xOffset > 0.0001f)
+                    zTwist = -zTwist;
+
+                Vector3? eulerOverride = null;
+                if (i == 0 && Mathf.Abs(zTwist) > 45f)
+                    eulerOverride = forkFirstRingEulerWhenZ90;
+
+                prev = SpawnRing(ringsParent, localPos, depth, xOffset, prev, hookIndex, chainRings, eulerOverride);
             }
         }
 
@@ -257,18 +278,23 @@ namespace Assets.Game.Scripts.Level
             return startX + branchIndex * forkBranchSpacingX;
         }
 
-        private RingHandler SpawnRing(Transform ringsParent, Vector3 localPosition, int depthFromHook, float localXOffset, RingHandler upperRing, int hookIndex, List<RingHandler> chainRings)
+        private RingHandler SpawnRing(Transform ringsParent, Vector3 localPosition, int depthFromHook, float localXOffset, RingHandler upperRing, int hookIndex, List<RingHandler> chainRings, Vector3? eulerOverride = null)
         {
             RingHandler handler = Instantiate(ringPrefab, ringsParent);
             handler.gameObject.name = $"Hook{hookIndex}_Ring_{_ringSpawnIndexInChain++}";
 
             handler.transform.localPosition = localPosition;
 
-            float zTwist = depthFromHook % 2 == 1 ? 90f : 0f;
-            if (localXOffset > 0.0001f)
-                zTwist = -zTwist;
+            if (eulerOverride.HasValue)
+                handler.transform.localRotation = Quaternion.Euler(eulerOverride.Value);
+            else
+            {
+                float zTwist = depthFromHook % 2 == 1 ? 90f : 0f;
+                if (localXOffset > 0.0001f)
+                    zTwist = -zTwist;
 
-            handler.transform.localRotation = Quaternion.Euler(-90f, 0f, zTwist);
+                handler.transform.localRotation = Quaternion.Euler(-90f, 0f, zTwist);
+            }
 
             handler.ConnectAbove(upperRing);
             chainRings.Add(handler);
