@@ -66,8 +66,7 @@ namespace Assets.Game.Scripts.Level
             ClearRuntimeLevelOverrides();
             if (!TryApplyLevelFromResources())
             {
-                Debug.LogError(
-                    $"[LevelGenerator] Seviye oluşturulamadı — JSON yüklenemedi veya geçersiz: Resources/{GetLoadPath(_levelIndex)}");
+                GameSignals.Instance.onLoadScene?.Invoke();
                 return;
             }
 
