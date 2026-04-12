@@ -51,7 +51,7 @@ namespace Assets.Game.Scripts.Level
             }
         }
 
-        private static StickHandler FindClosestMatchingStick(RingHandler candidateRing, IReadOnlyList<StickHandler> sticks)
+        private StickHandler FindClosestMatchingStick(RingHandler candidateRing, IReadOnlyList<StickHandler> sticks)
         {
             StickHandler best = null;
             float bestSqr = float.PositiveInfinity;

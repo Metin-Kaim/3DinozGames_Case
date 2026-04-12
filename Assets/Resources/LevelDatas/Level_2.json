@@ -1,57 +1,58 @@
 {
     "stickCount": 5,
     "hookCount": 3,
+    "timeLimitSeconds": 15,
     "stickColorTypes": [
-        4,
+        3,
         0,
+        3,
         2,
-        1,
-        3
+        4
     ],
     "hooks": [
         {
-            "baseRingCount": 3,
+            "baseRingCount": 4,
+            "fork": true,
+            "branch1BaseRingCount": 2,
+            "branch2BaseRingCount": 1,
+            "trunkRingColorTypes": [
+                3,
+                0,
+                4,
+                3
+            ],
+            "branch1RingColorTypes": [
+                2,
+                2
+            ],
+            "branch2RingColorTypes": [
+                2
+            ]
+        },
+        {
+            "baseRingCount": 4,
             "fork": false,
             "branch1BaseRingCount": 0,
             "branch2BaseRingCount": 0,
             "trunkRingColorTypes": [
                 0,
-                1,
-                3
+                3,
+                3,
+                4
             ],
             "branch1RingColorTypes": [],
             "branch2RingColorTypes": []
         },
         {
-            "baseRingCount": 3,
-            "fork": true,
-            "branch1BaseRingCount": 2,
-            "branch2BaseRingCount": 2,
-            "trunkRingColorTypes": [
-                2,
-                3,
-                4
-            ],
-            "branch1RingColorTypes": [
-                1,
-                4
-            ],
-            "branch2RingColorTypes": [
-                4,
-                3
-            ]
-        },
-        {
-            "baseRingCount": 5,
+            "baseRingCount": 4,
             "fork": false,
             "branch1BaseRingCount": 0,
             "branch2BaseRingCount": 0,
             "trunkRingColorTypes": [
+                3,
+                4,
                 0,
-                1,
-                0,
-                2,
-                2
+                3
             ],
             "branch1RingColorTypes": [],
             "branch2RingColorTypes": []

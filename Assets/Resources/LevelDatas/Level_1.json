@@ -1,6 +1,7 @@
 {
     "stickCount": 4,
     "hookCount": 2,
+    "timeLimitSeconds": 10,
     "stickColorTypes": [
         2,
         2,

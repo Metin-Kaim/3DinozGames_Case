@@ -85,6 +85,14 @@ namespace Assets.Game.Scripts.Editor
 
         private void SaveLevelJsonToResources(int levelIndex1Based)
         {
+            string fileLabel = $"Level_{levelIndex1Based}.json";
+            if (!EditorUtility.DisplayDialog(
+                    "Level kaydet",
+                    $"{fileLabel} dosyasına kaydetmek istiyor musunuz?",
+                    "Evet",
+                    "Hayır"))
+                return;
+
             try
             {
                 LevelDataFileUtility.EnsureDirectoryExists();
@@ -131,6 +139,8 @@ namespace Assets.Game.Scripts.Editor
 
         private void ApplyLevelGeneratorLevelData(LevelData data)
         {
+            _timeLimitSeconds = data.timeLimitSeconds > 0 ? data.timeLimitSeconds : 60;
+
             _stickCount = Mathf.Clamp(data.stickCount, 1, MaxStickCount);
 
             for (int i = 0; i < _stickCount; i++)
@@ -226,6 +236,7 @@ namespace Assets.Game.Scripts.Editor
             {
                 stickCount = _stickCount,
                 hookCount = _hookCount,
+                timeLimitSeconds = _timeLimitSeconds,
                 stickColorTypes = stickColors,
                 hooks = new HookLevelData[_hookCount]
             };

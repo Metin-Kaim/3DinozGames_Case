@@ -70,6 +70,7 @@ namespace Assets.Game.Scripts.Level
                 return;
             }
 
+            LevelSignals.Instance.onLevelLoaded?.Invoke(_levelData);
             SpawnSticks();
             SpawnChains();
         }

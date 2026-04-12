@@ -61,6 +61,7 @@ namespace Assets.Game.Scripts.Editor
 
         private int _levelFileIndex = 1;
         private int _newLevelSlotNumber = 1;
+        private int _timeLimitSeconds = 60;
 
         [MenuItem("Tools/3Dinoz/LevelGeneratorEditor")]
         public static void Open()
@@ -105,6 +106,13 @@ namespace Assets.Game.Scripts.Editor
 
             _stickCount = EditorGUILayout.IntSlider(new GUIContent("Stick count"), _stickCount, 1, MaxStickCount);
             _hookCount = EditorGUILayout.IntSlider(new GUIContent("Hook count"), _hookCount, 1, MaxHookCount);
+
+            _timeLimitSeconds = EditorGUILayout.IntField(
+                new GUIContent(
+                    "Timer (seconds)",
+                    "Bu level için geri sayım süresi. Save ile Level_{n}.json içine yazılır."),
+                _timeLimitSeconds);
+            _timeLimitSeconds = Mathf.Max(1, _timeLimitSeconds);
 
             EditorGUILayout.Space(6f);
             DrawBrushPalette();

@@ -1,3 +1,4 @@
+using Assets.Game.Scripts.Datas.DataValues;
 using Assets.Game.Scripts.Signals;
 using TMPro;
 using UnityEngine;
@@ -7,10 +8,7 @@ namespace Assets.Game.Scripts.UI
     public class TimerPanelController : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI timerText;
-        [Tooltip("Geri sayım süresi (saniye).")]
-        [SerializeField] private int timeLimitSeconds = 60;
-
-        private float _remainingSeconds;
+        private float _timeLimitSeconds;
         private bool _isActive;
 
         private void OnEnable()
@@ -18,14 +16,16 @@ namespace Assets.Game.Scripts.UI
             ResetTimer();
             _isActive = true;
             GameSignals.Instance.onGameEnded += OnGameEnded;
+            if (LevelSignals.Instance != null)
+                LevelSignals.Instance.onLevelLoaded += OnLevelLoaded;
         }
 
         private void OnDisable()
         {
-            if (GameSignals.Instance == null)
-                return;
-
-            GameSignals.Instance.onGameEnded -= OnGameEnded;
+            if (GameSignals.Instance != null)
+                GameSignals.Instance.onGameEnded -= OnGameEnded;
+            if (LevelSignals.Instance != null)
+                LevelSignals.Instance.onLevelLoaded -= OnLevelLoaded;
         }
 
         private void Update()
@@ -33,10 +33,10 @@ namespace Assets.Game.Scripts.UI
             if (!_isActive)
                 return;
 
-            _remainingSeconds -= Time.deltaTime;
-            if (_remainingSeconds <= 0f)
+            _timeLimitSeconds -= Time.deltaTime;
+            if (_timeLimitSeconds <= 0f)
             {
-                _remainingSeconds = 0f;
+                _timeLimitSeconds = 0f;
                 UpdateTimerText();
                 OnTimeExpired();
                 return;
@@ -47,7 +47,7 @@ namespace Assets.Game.Scripts.UI
 
         public void ResetTimer()
         {
-            _remainingSeconds = timeLimitSeconds;
+            _timeLimitSeconds = 0;
             UpdateTimerText();
         }
 
@@ -56,17 +56,26 @@ namespace Assets.Game.Scripts.UI
             if (timerText == null)
                 return;
 
-            timerText.text = _remainingSeconds.ToString("F0");
+            timerText.text = _timeLimitSeconds.ToString("F0");
         }
 
         private void OnTimeExpired()
         {
+            if (!_isActive)
+                return;
+            _isActive = false;
             GameSignals.Instance?.onGameEnded?.Invoke(false, 0f);
         }
 
         private void OnGameEnded(bool isWin, float delay)
         {
             _isActive = false;
+        }
+
+        private void OnLevelLoaded(LevelData levelData)
+        {
+            _timeLimitSeconds = levelData.timeLimitSeconds;
+            UpdateTimerText();
         }
     }
 }
