@@ -122,6 +122,58 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &180285137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 180285138}
+  - component: {fileID: 180285139}
+  m_Layer: 0
+  m_Name: ParticleController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &180285138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180285137}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 225838074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &180285139
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180285137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827158a6ce5b9de47906210ee82a6f75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  winParticle: {fileID: 8791802859067835849, guid: ae07f2a45f14a82428409cfe410e6002,
+    type: 3}
+  winParticleSpawnPoint: {fileID: 1360080537}
+  ringParticlePrefab: {fileID: 2787394869552721417, guid: 83036083a4ebcd34f98131bd3cf6f4d2,
+    type: 3}
+  ringPoolRoot: {fileID: 180285138}
+  ringPoolInitialSize: 8
+  ringParticleYOffset: 0.12
 --- !u!1 &225838073
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,6 +207,7 @@ Transform:
   - {fileID: 1994312900}
   - {fileID: 482866259}
   - {fileID: 1701628593}
+  - {fileID: 180285138}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &285893530
@@ -189,6 +242,7 @@ Transform:
   - {fileID: 622492830}
   - {fileID: 407264477}
   - {fileID: 2135391762}
+  - {fileID: 1360080537}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &302972512
@@ -508,6 +562,7 @@ GameObject:
   - component: {fileID: 503196127}
   - component: {fileID: 503196130}
   - component: {fileID: 503196131}
+  - component: {fileID: 503196132}
   m_Layer: 0
   m_Name: Signals
   m_TagString: Untagged
@@ -602,6 +657,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 713e134fbeade4d49832b5703de4bff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &503196132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503196123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4947e556973e2d41af569e66d429e7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &622492827
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +756,7 @@ Transform:
   m_GameObject: {fileID: 622492827}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2260023, y: -0, z: -0, w: 0.97412676}
-  m_LocalPosition: {x: 0, y: 5.5, z: -9.3}
+  m_LocalPosition: {x: 0, y: 5.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1060,6 +1127,7 @@ MonoBehaviour:
   failPanel: {fileID: 8843141757651138680, guid: 5c7f2ad90c3abe04d82aa75ac5da37ee,
     type: 3}
   panelContainer: {fileID: 786470260}
+  showWinPanelDelay: 0.8
 --- !u!1 &791336261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,8 +1250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b1392d458f2d043ad7708b4fbf4fe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useTestLevelIndex: 0
-  testLevelIndex: 3
+  useTestLevelIndex: 1
+  testLevelIndex: 1
   stickPrefab: {fileID: 7722334455667788992, guid: 34d1023d2011c93448972996d801c5d4,
     type: 3}
   layoutConfig: {fileID: 11400000, guid: 924f7a5cb1990e74da13d99ba3606d80, type: 2}
@@ -1249,6 +1317,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 225838074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1360080536
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1360080537}
+  m_Layer: 0
+  m_Name: WinParticlePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1360080537
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360080536}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: -3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 285893531}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1394569225
 GameObject:

@@ -146,6 +146,7 @@ namespace Assets.Game.Scripts.Level
                     continue;
 
                 _rings.Remove(candidateRing);
+                ParticleSignals.Instance.onSpawnRingParticle.Invoke(candidateRing.transform.position);
                 candidateRing.DetachFromChainForStick();
                 candidateRing.AttachToStickWithTween(stick, attachToStickTweenDuration);
                 AudioSignals.Instance?.onPlaySound?.Invoke(GameSoundType.ChainMatchFound);

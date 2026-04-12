@@ -12,6 +12,8 @@ public class GameEndPanelController : MonoBehaviour
 
     [SerializeField] private GameObject panelContainer;
 
+    [SerializeField] private float showWinPanelDelay = .2f;
+
 
     private void OnEnable()
     {
@@ -28,13 +30,10 @@ public class GameEndPanelController : MonoBehaviour
 
     private void OnGameEnded(bool isWin, float delay)
     {
-        if (delay > 0f)
-            DOVirtual.DelayedCall(delay, () =>
-            {
-                ShowPanel(isWin);
-            }).SetTarget(this);
-        else
+        DOVirtual.DelayedCall(delay + showWinPanelDelay, () =>
+        {
             ShowPanel(isWin);
+        }).SetTarget(this);
     }
 
     private void ShowPanel(bool isWin)
