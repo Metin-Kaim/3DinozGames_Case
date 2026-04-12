@@ -25,9 +25,9 @@ namespace Assets.Game.Scripts.UI
             LevelSignals.Instance.onLevelLoaded -= OnLevelLoaded;
         }
 
-        private void OnLevelLoaded(LevelData levelData)
+        private void OnLevelLoaded(LevelData levelData, int levelIndex)
         {
-            levelCounterText.text = "Level " + (SaveSignals.Instance.onGetSavedLevelIndex());
+            levelCounterText.text = "Level " + levelIndex;
         }
     }
 }

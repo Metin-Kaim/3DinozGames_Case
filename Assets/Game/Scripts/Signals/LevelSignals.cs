@@ -17,7 +17,8 @@ namespace Assets.Game.Scripts.Signals
         public Func<int, List<Vector3>> onGetStickLocalPositions;
         public UnityAction<StickHandler> onStickSpawned;
         public Func<bool> onHasCurrentLevel;
-        public UnityAction<LevelData> onLevelLoaded;
+        public UnityAction<LevelData, int> onLevelLoaded;
+        public Func<int> onGetCurrentLevelIndex;
 
         private void Awake()
         {

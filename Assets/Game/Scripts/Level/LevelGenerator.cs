@@ -11,8 +11,11 @@ namespace Assets.Game.Scripts.Level
     {
         public const string FolderName = "LevelDatas";
 
-        [Header("Level data (Resources/LevelDatas)")]
-        [Tooltip("Yüklenecek JSON: Resources/LevelDatas/Level_{levelIndex}.json")]
+        [Header("Test level (Optional)")]
+        [SerializeField] private bool useTestLevelIndex;
+        [Tooltip("Test için oynanacak level (≥1).")]
+        [Min(1)]
+        [SerializeField] private int testLevelIndex = 1;
 
         [Header("Sticks — Spawn")]
         [SerializeField] private StickHandler stickPrefab;
@@ -49,6 +52,7 @@ namespace Assets.Game.Scripts.Level
 
             LevelSignals.Instance.onGetStickLocalPositions += GetStickLocalPositions;
             GameSignals.Instance.onGameEnded += OnGameEnded;
+            LevelSignals.Instance.onGetCurrentLevelIndex += () => _levelIndex;
         }
         private void OnDisable()
         {
@@ -57,11 +61,12 @@ namespace Assets.Game.Scripts.Level
 
             LevelSignals.Instance.onGetStickLocalPositions -= GetStickLocalPositions;
             GameSignals.Instance.onGameEnded -= OnGameEnded;
+            LevelSignals.Instance.onGetCurrentLevelIndex -= () => _levelIndex;
         }
 
         private void Start()
         {
-            _levelIndex = SaveSignals.Instance.onGetSavedLevelIndex?.Invoke() ?? 1;
+            _levelIndex = ResolvePlayLevelIndex();
 
             ClearRuntimeLevelOverrides();
             if (!TryApplyLevelFromResources())
@@ -70,7 +75,7 @@ namespace Assets.Game.Scripts.Level
                 return;
             }
 
-            LevelSignals.Instance.onLevelLoaded?.Invoke(_levelData);
+            LevelSignals.Instance.onLevelLoaded?.Invoke(_levelData, _levelIndex);
             SpawnSticks();
             SpawnChains();
         }
@@ -78,6 +83,13 @@ namespace Assets.Game.Scripts.Level
         private void ClearRuntimeLevelOverrides()
         {
             _levelData = null;
+        }
+
+        private int ResolvePlayLevelIndex()
+        {
+            if (useTestLevelIndex && testLevelIndex >= 1)
+                return testLevelIndex;
+            return SaveSignals.Instance.onGetSavedLevelIndex.Invoke();
         }
 
         private bool TryApplyLevelFromResources()
@@ -286,6 +298,9 @@ namespace Assets.Game.Scripts.Level
 
         private void OnGameEnded(bool isWin, float delay)
         {
+            if (useTestLevelIndex)
+                return;
+
             if (isWin)
                 _levelIndex++;
             SaveSignals.Instance.onSaveLevelIndex?.Invoke(_levelIndex);

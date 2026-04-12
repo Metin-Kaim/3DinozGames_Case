@@ -41,7 +41,7 @@ namespace Assets.Game.Scripts.Datas
         {
             string path = LevelGenerator.FolderName;
 
-            int levelIndex = SaveSignals.Instance.onGetSavedLevelIndex?.Invoke() ?? 1;
+            int levelIndex = LevelSignals.Instance.onGetCurrentLevelIndex?.Invoke() ?? 1;
 
             string levelDataPath = $"{path}/Level_{levelIndex}";
             TextAsset textAsset = Resources.Load<TextAsset>(levelDataPath);

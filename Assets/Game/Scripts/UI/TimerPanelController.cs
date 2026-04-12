@@ -72,7 +72,7 @@ namespace Assets.Game.Scripts.UI
             _isActive = false;
         }
 
-        private void OnLevelLoaded(LevelData levelData)
+        private void OnLevelLoaded(LevelData levelData, int levelIndex)
         {
             _timeLimitSeconds = levelData.timeLimitSeconds;
             UpdateTimerText();
