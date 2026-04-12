@@ -15,6 +15,7 @@ namespace Assets.Game.Scripts.Signals
         public UnityAction<StickHandler> onStickFilled;
         public Func<int, List<Vector3>> onGetStickLocalPositions;
         public UnityAction<StickHandler> onStickSpawned;
+        public Func<bool> onHasCurrentLevel;
 
         private void Awake()
         {

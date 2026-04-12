@@ -15,7 +15,7 @@ namespace Assets.Game.Scripts.Level
         [SerializeField] private float stickRealignDelay = 0.08f;
 
         private readonly List<StickHandler> _sticks = new();
-        
+
         private void OnEnable()
         {
             if (LevelSignals.Instance == null)
@@ -53,6 +53,11 @@ namespace Assets.Game.Scripts.Level
 
             if (!_sticks.Remove(stick))
                 return;
+
+            if (_sticks.Count == 0)
+            {
+                GameSignals.Instance?.onGameEnded?.Invoke(true, stickDisappearDuration);
+            }
 
             ScheduleRealignSticks();
 

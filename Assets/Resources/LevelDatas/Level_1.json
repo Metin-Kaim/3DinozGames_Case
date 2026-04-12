@@ -10,14 +10,11 @@
     ],
     "hooks": [
         {
-            "baseRingCount": 9,
+            "baseRingCount": 6,
             "fork": false,
             "branch1BaseRingCount": 0,
             "branch2BaseRingCount": 0,
             "trunkRingColorTypes": [
-                4,
-                4,
-                4,
                 4,
                 4,
                 4,
@@ -31,8 +28,8 @@
         {
             "baseRingCount": 3,
             "fork": true,
-            "branch1BaseRingCount": 5,
-            "branch2BaseRingCount": 6,
+            "branch1BaseRingCount": 3,
+            "branch2BaseRingCount": 3,
             "trunkRingColorTypes": [
                 2,
                 2,
@@ -41,17 +38,12 @@
             "branch1RingColorTypes": [
                 3,
                 3,
-                3,
-                3,
                 3
             ],
             "branch2RingColorTypes": [
                 3,
                 3,
-                3,
-                3,
-                3,
-                2
+                3
             ]
         }
     ]

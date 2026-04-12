@@ -9,11 +9,10 @@ namespace Assets.Game.Scripts.Level
 {
     public class LevelGenerator : MonoBehaviour
     {
-        private const string FolderName = "LevelDatas";
+        public const string FolderName = "LevelDatas";
 
         [Header("Level data (Resources/LevelDatas)")]
         [Tooltip("Yüklenecek JSON: Resources/LevelDatas/Level_{levelIndex}.json")]
-        [SerializeField][Min(1)] private int levelIndex = 1;
 
         [Header("Sticks — Spawn")]
         [SerializeField] private StickHandler stickPrefab;
@@ -37,6 +36,7 @@ namespace Assets.Game.Scripts.Level
         [Header("Chains — Fork tree")]
         [SerializeField] private float forkBranchSpacingX = 0.4f;
 
+        private int _levelIndex;
         private int _ringSpawnIndexInChain;
 
         private LevelData _levelData;
@@ -48,23 +48,26 @@ namespace Assets.Game.Scripts.Level
                 return;
 
             LevelSignals.Instance.onGetStickLocalPositions += GetStickLocalPositions;
+            GameSignals.Instance.onGameEnded += OnGameEnded;
         }
-
         private void OnDisable()
         {
             if (LevelSignals.Instance == null)
                 return;
 
             LevelSignals.Instance.onGetStickLocalPositions -= GetStickLocalPositions;
+            GameSignals.Instance.onGameEnded -= OnGameEnded;
         }
 
         private void Start()
         {
+            _levelIndex = SaveSignals.Instance.onGetSavedLevelIndex?.Invoke() ?? 1;
+
             ClearRuntimeLevelOverrides();
             if (!TryApplyLevelFromResources())
             {
                 Debug.LogError(
-                    $"[LevelGenerator] Seviye oluşturulamadı — JSON yüklenemedi veya geçersiz: Resources/{GetLoadPath(levelIndex)}");
+                    $"[LevelGenerator] Seviye oluşturulamadı — JSON yüklenemedi veya geçersiz: Resources/{GetLoadPath(_levelIndex)}");
                 return;
             }
 
@@ -79,7 +82,7 @@ namespace Assets.Game.Scripts.Level
 
         private bool TryApplyLevelFromResources()
         {
-            if (!TryLoadLevelDataFromResources(levelIndex, out LevelData data))
+            if (!TryLoadLevelDataFromResources(_levelIndex, out LevelData data))
                 return false;
 
             _levelData = data;
@@ -280,5 +283,13 @@ namespace Assets.Game.Scripts.Level
             data = JsonUtility.FromJson<LevelData>(textAsset.text);
             return data != null && data.hooks != null && data.hooks.Length > 0;
         }
+
+        private void OnGameEnded(bool isWin, float delay)
+        {
+            if (isWin)
+                _levelIndex++;
+            SaveSignals.Instance.onSaveLevelIndex?.Invoke(_levelIndex);
+        }
+
     }
 }
