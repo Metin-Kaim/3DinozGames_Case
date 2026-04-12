@@ -148,9 +148,11 @@ namespace Assets.Game.Scripts.Level
                 _rings.Remove(candidateRing);
                 candidateRing.DetachFromChainForStick();
                 candidateRing.AttachToStickWithTween(stick, attachToStickTweenDuration);
+                AudioSignals.Instance?.onPlaySound?.Invoke(GameSoundType.ChainMatchFound);
                 return;
             }
 
+            AudioSignals.Instance?.onPlaySound?.Invoke(GameSoundType.ChainMatchNotFound);
         }
 
         private StickHandler FindClosestMatchingStick(RingHandler candidateRing, IReadOnlyList<StickHandler> sticks)

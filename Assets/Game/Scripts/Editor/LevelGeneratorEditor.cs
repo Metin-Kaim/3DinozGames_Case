@@ -63,7 +63,7 @@ namespace Assets.Game.Scripts.Editor
         private int _newLevelSlotNumber = 1;
         private int _timeLimitSeconds = 60;
 
-        [MenuItem("Tools/3Dinoz/LevelGeneratorEditor")]
+        [MenuItem("3Dinoz/LevelGeneratorEditor")]
         public static void Open()
         {
             var window = GetWindow<LevelGeneratorEditor>();

@@ -1,4 +1,5 @@
 using Assets.Game.Scripts.Datas.DataValues;
+using Assets.Game.Scripts.Enum;
 using Assets.Game.Scripts.Signals;
 using TMPro;
 using UnityEngine;

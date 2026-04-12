@@ -1,7 +1,7 @@
 using UnityEngine;
 using Assets.Game.Scripts.Signals;
-using DG.Tweening;
 using Assets.Game.Scripts.Enum;
+using DG.Tweening;
 
 namespace Assets.Game.Scripts.Level
 {
@@ -47,7 +47,10 @@ namespace Assets.Game.Scripts.Level
             _ringCount++;
 
             if (_ringCount >= MaxRings)
+            {
+                AudioSignals.Instance?.onPlaySound?.Invoke(GameSoundType.StickFull);
                 LevelSignals.Instance?.onStickFilled?.Invoke(this);
+            }
 
             return true;
         }

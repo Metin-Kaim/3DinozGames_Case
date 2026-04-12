@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Assets.Game.Scripts.Enum;
 using Assets.Game.Scripts.Signals;
 
 namespace Assets.Game.Scripts.Level

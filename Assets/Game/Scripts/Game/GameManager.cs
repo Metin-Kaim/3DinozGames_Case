@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Game.Scripts.Enum;
 using Assets.Game.Scripts.Signals;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,6 +30,7 @@ namespace Assets.Game.Scripts.Game
         private void OnGameEnded(bool isWin, float delay)
         {
             InputSignals.Instance.OnSetClickable?.Invoke(false);
+            AudioSignals.Instance?.onPlaySound?.Invoke(isWin ? GameSoundType.Win : GameSoundType.Fail);
         }
 
         private void LoadScene()
