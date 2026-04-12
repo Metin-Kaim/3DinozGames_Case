@@ -1250,7 +1250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b1392d458f2d043ad7708b4fbf4fe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useTestLevelIndex: 1
+  useTestLevelIndex: 0
   testLevelIndex: 1
   stickPrefab: {fileID: 7722334455667788992, guid: 34d1023d2011c93448972996d801c5d4,
     type: 3}
