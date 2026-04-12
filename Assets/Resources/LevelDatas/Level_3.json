@@ -30,18 +30,25 @@
             ]
         },
         {
-            "baseRingCount": 4,
-            "fork": false,
-            "branch1BaseRingCount": 0,
-            "branch2BaseRingCount": 0,
+            "baseRingCount": 3,
+            "fork": true,
+            "branch1BaseRingCount": 3,
+            "branch2BaseRingCount": 3,
             "trunkRingColorTypes": [
                 0,
                 3,
-                3,
-                4
+                3
             ],
-            "branch1RingColorTypes": [],
-            "branch2RingColorTypes": []
+            "branch1RingColorTypes": [
+                0,
+                0,
+                0
+            ],
+            "branch2RingColorTypes": [
+                0,
+                0,
+                0
+            ]
         },
         {
             "baseRingCount": 4,
